@@ -6,7 +6,7 @@ function Neuron(inputCount, activationFunction, activationFunctionDerivative, le
   while (this.weights.length < inputCount) {
     this.weights.push(0.01 * Math.random());
   }
-  this.bias = 0.1 * Math.random();
+  this.bias = -0.1 * Math.random();
   this.activationFunction = activationFunction;
   this.activationFunctionDerivative = activationFunctionDerivative;
   this.learningRate = learningRate;
@@ -14,7 +14,7 @@ function Neuron(inputCount, activationFunction, activationFunctionDerivative, le
 
 Neuron.prototype.forward = function (x) {
   'use strict';
-  var sum = math.dot(this.weights, x) - this.bias;
+  var sum = math.dot(this.weights, x) + this.bias;
   this.lastActivation = this.activationFunction(sum);
   this.lastActivationFunctionDerivative = this.activationFunctionDerivative(sum);
   return this.lastActivation;
@@ -22,7 +22,7 @@ Neuron.prototype.forward = function (x) {
 
 Neuron.prototype.predict = function (x) {
   'use strict';
-  return this.activationFunction(math.dot(this.weights, x) - this.bias);
+  return this.activationFunction(math.dot(this.weights, x) + this.bias);
 };
 
 Neuron.prototype.updateWeights = function () {
@@ -31,6 +31,7 @@ Neuron.prototype.updateWeights = function () {
   for (i = 0; i < this.weights.length; i += 1) {
     this.weights[i] -= this.learningRate * this.errorFunctionGradient[i];
   }
+  this.bias -= this.learningRate * this.error;
 };
 
 function Layer(inputCount, neuronCount, activationFunction, activationFunctionDerivative, learningRate) {
