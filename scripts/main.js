@@ -2,11 +2,14 @@
   'use strict';
   var w = 40,
     h = 30,
-    network = new Network(3 * w * h, [200, 150, 200, 3 * w * h], function (x) {
-      return 1 / (1 + Math.exp(-x));
-    }, function (x) {
-      return Math.exp(x) / Math.pow(1 + Math.exp(x), 2);
-    }, 0.01),
+    network = new Network(
+      3 * w * h, // input
+      [200, 150, 200, 3 * w * h], // layers
+      function (x) { return 1 / (1 + Math.exp(-x)); }, // activation function
+      function (x) { return Math.exp(x) / Math.pow(1 + Math.exp(x), 2); }, // derivative
+      0.01, // learning rate
+      0.001 // weight decay rate
+    ),
     input = document.getElementById('input'),
     output = document.getElementById('output');
   [input.width, input.height] = [w, h];

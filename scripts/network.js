@@ -1,6 +1,6 @@
 /*global math */
 
-function Neuron(inputCount, activationFunction, activationFunctionDerivative, learningRate) {
+function Neuron(inputCount, activationFunction, activationFunctionDerivative, learningRate, weightDecayRate) {
   'use strict';
   this.weights = [];
   while (this.weights.length < inputCount) {
@@ -10,6 +10,7 @@ function Neuron(inputCount, activationFunction, activationFunctionDerivative, le
   this.activationFunction = activationFunction;
   this.activationFunctionDerivative = activationFunctionDerivative;
   this.learningRate = learningRate;
+  this.weightDecayRate = weightDecayRate;
 }
 
 Neuron.prototype.forward = function (x) {
@@ -29,16 +30,16 @@ Neuron.prototype.updateWeights = function () {
   'use strict';
   var i;
   for (i = 0; i < this.weights.length; i += 1) {
-    this.weights[i] -= this.learningRate * this.errorFunctionGradient[i];
+    this.weights[i] -= (this.learningRate * this.errorFunctionGradient[i] + this.weightDecayRate * this.weights[i]);
   }
   this.bias -= this.learningRate * this.error;
 };
 
-function Layer(inputCount, neuronCount, activationFunction, activationFunctionDerivative, learningRate) {
+function Layer(inputCount, neuronCount, activationFunction, activationFunctionDerivative, learningRate, weightDecayRate) {
   'use strict';
   this.neurons = [];
   while (this.neurons.length < neuronCount) {
-    this.neurons.push(new Neuron(inputCount, activationFunction, activationFunctionDerivative, learningRate));
+    this.neurons.push(new Neuron(inputCount, activationFunction, activationFunctionDerivative, learningRate, weightDecayRate));
   }
 }
 
@@ -57,11 +58,11 @@ Layer.prototype.updateWeights = function () {
   this.neurons.forEach(function (n) { n.updateWeights(); });
 };
 
-function Network(inputCount, neuronCounts, activationFunction, activationFunctionDerivative, learningRate) {
+function Network(inputCount, neuronCounts, activationFunction, activationFunctionDerivative, learningRate, weightDecayRate) {
   'use strict';
   this.layers = [];
   neuronCounts.reduce(function (i, n) {
-    this.layers.push(new Layer(i, n, activationFunction, activationFunctionDerivative, learningRate));
+    this.layers.push(new Layer(i, n, activationFunction, activationFunctionDerivative, learningRate, weightDecayRate));
     return n;
   }.bind(this), inputCount);
 }
